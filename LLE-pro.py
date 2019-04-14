@@ -42,7 +42,7 @@ def plot_embedding(X, title=None):
     plt.figure()
     ax = plt.subplot(111)
     for i in range(X.shape[0]):
-        plt.scatter(X[i, 0], X[i, 1], color=plt.cm.Set1(y[i] / 1))
+        plt.scatter(X[i, 0], X[i, 1], color=plt.cm.Set1(y[i] *2))
 #        plt.text(X[i, 0], X[i, 1], str(y[i]),
 #                 color=plt.cm.Set1(y[i] / 1),
 #                 fontdict={'weight': 'bold', 'size': 9})
@@ -70,10 +70,10 @@ def plot_embedding3D(X, title=None):
 #    x_min, x_max = np.min(X, 0), np.max(X, 0)
 #    X = (X - x_min) / (x_max - x_min)
 
-    plt.figure()
-#    ax = plt.subplot(111)
+    fig = plt.figure()
+    ax = Axes3D(fig)
     for i in range(X.shape[0]):
-        plt.scatter(X[i, 0], X[i, 1], X[i, 2], color=plt.cm.Set1(y[i] / 1))
+        ax.scatter(X[i, 0], X[i, 1], X[i, 2], color=plt.cm.Set1(y[i] / 1))
 #        plt.text(X[i, 0], X[i, 1], str(y[i]),
 #                 color=plt.cm.Set1(y[i] / 1),
 #                 fontdict={'weight': 'bold', 'size': 9})
@@ -96,23 +96,78 @@ def plot_embedding3D(X, title=None):
         plt.title(title)
 
 
-# Projection on to the first 2 principal components
-
-print("Computing PCA projection")
-X_pca = decomposition.TruncatedSVD(n_components=3).fit_transform(X)
-plot_embedding(X_pca,
-               "Principal Components projection of the digits")
+'''PCA'''
+#print("Computing PCA projection")
+#X_pca = decomposition.TruncatedSVD(n_components=3).fit_transform(X)
+#plot_embedding(X_pca[:, 0:2],
+#               "Principal Components projection of the digits")
 # Projection on to the first 2 linear discriminant components
 
 
-# Locally linear embedding of the digits dataset
-print("Computing LLE embedding")
-clf = manifold.LocallyLinearEmbedding(n_neighbors, n_components=5,
-                                      method='standard')
-t0 = time()
-X_lle = clf.fit_transform(X)
-print("Done. Reconstruction error: %g" % clf.reconstruction_error_)
+'''Locally linear embedding of the digits dataset'''
+#n_neighbors = 12
+#print("Computing LLE embedding")
+#clf = manifold.LocallyLinearEmbedding(n_neighbors, n_components=5,
+#                                      method='standard')
+#t0 = time()
+#X_lle = clf.fit_transform(X)
+#print("Done. Reconstruction error: %g" % clf.reconstruction_error_)
+#
+###plot_embedding3D(X_lle[:, 0:3],
+###               "Locally Linear Embedding of the digits (time %.2fs)" %
+###               (time() - t0))
+##
+#plot_embedding(X_lle[:, 0:2],
+#               "Locally Linear Embedding of the digits (time %.2fs)" %
+#               (time() - t0))
+##plot_embedding(X_lle[:, 2:4],
+##               "Locally Linear Embedding of the digits (time %.2fs)" %
+##               (time() - t0))
+    
+    
+'''Isomap projection of the digits dataset'''
+#print("Computing Isomap embedding")
+#t0 = time()
+#n_neighbors = 5
+#X_iso = manifold.Isomap(n_neighbors, n_components=3).fit_transform(X)
+#print("Done.")
+#plot_embedding(X_iso,
+#               "Isomap projection of the digits (time %.2fs)" %
+#               (time() - t0))
 
-plot_embedding(X_lle[:, 1:3],
-               "Locally Linear Embedding of the digits (time %.2fs)" %
+#
+'''Modified Locally linear embedding of the digits dataset'''
+#n_neighbors = 31
+#print("Computing modified LLE embedding")
+#clf = manifold.LocallyLinearEmbedding(n_neighbors, n_components=2,
+#                                      method='modified')
+#t0 = time()
+#X_mlle = clf.fit_transform(X)
+#print("Done. Reconstruction error: %g" % clf.reconstruction_error_)
+#plot_embedding(X_mlle,
+#               "Modified Locally Linear Embedding of the digits (time %.2fs)" %
+#               (time() - t0))
+
+''' t-SNE embedding of the digits dataset'''
+#print("Computing t-SNE embedding")
+#n_neighbors = 3
+#tsne = manifold.TSNE(n_components=2, init='pca', random_state=0)
+#t0 = time()
+#X_tsne = tsne.fit_transform(X)
+#
+#plot_embedding(X_tsne,
+#               "t-SNE embedding of the digits (time %.2fs)" %
+#               (time() - t0))
+#
+#plt.show()
+
+
+'''MDS  embedding of the digits dataset'''
+print("Computing MDS embedding")
+clf = manifold.MDS(n_components=2, n_init=1, max_iter=1000)
+t0 = time()
+X_mds = clf.fit_transform(X)
+print("Done. Stress: %f" % clf.stress_)
+plot_embedding(X_mds,
+               "MDS embedding of the digits (time %.2fs)" %
                (time() - t0))

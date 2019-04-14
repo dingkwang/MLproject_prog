@@ -96,36 +96,36 @@ plot_embedding(X_projected, "Random Projection of the digits")
 
 #----------------------------------------------------------------------
 # Projection on to the first 2 principal components
-
-print("Computing PCA projection")
-t0 = time()
-X_pca = decomposition.TruncatedSVD(n_components=2).fit_transform(X)
-plot_embedding(X_pca,
-               "Principal Components projection of the digits (time %.2fs)" %
-               (time() - t0))
-
-#----------------------------------------------------------------------
-# Projection on to the first 2 linear discriminant components
-
-print("Computing Linear Discriminant Analysis projection")
-X2 = X.copy()
-X2.flat[::X.shape[1] + 1] += 0.01  # Make X invertible
-t0 = time()
-X_lda = discriminant_analysis.LinearDiscriminantAnalysis(n_components=2).fit_transform(X2, y)
-plot_embedding(X_lda,
-               "Linear Discriminant projection of the digits (time %.2fs)" %
-               (time() - t0))
-
+#
+#print("Computing PCA projection")
+#t0 = time()
+#X_pca = decomposition.TruncatedSVD(n_components=2).fit_transform(X)
+#plot_embedding(X_pca,
+#               "Principal Components projection of the digits (time %.2fs)" %
+#               (time() - t0))
 #
 ##----------------------------------------------------------------------
-## Isomap projection of the digits dataset
-#print("Computing Isomap embedding")
+# Projection on to the first 2 linear discriminant components
+
+#print("Computing Linear Discriminant Analysis projection")
+#X2 = X.copy()
+#X2.flat[::X.shape[1] + 1] += 0.01  # Make X invertible
 #t0 = time()
-#X_iso = manifold.Isomap(n_neighbors, n_components=2).fit_transform(X)
-#print("Done.")
-#plot_embedding(X_iso,
-#               "Isomap projection of the digits (time %.2fs)" %
+#X_lda = discriminant_analysis.LinearDiscriminantAnalysis(n_components=2).fit_transform(X2, y)
+#plot_embedding(X_lda,
+#               "Linear Discriminant projection of the digits (time %.2fs)" %
 #               (time() - t0))
+
+#
+#----------------------------------------------------------------------
+# Isomap projection of the digits dataset
+print("Computing Isomap embedding")
+t0 = time()
+X_iso = manifold.Isomap(n_neighbors, n_components=2).fit_transform(X)
+print("Done.")
+plot_embedding(X_iso,
+               "Isomap projection of the digits (time %.2fs)" %
+               (time() - t0))
 #
 #
 ##----------------------------------------------------------------------
