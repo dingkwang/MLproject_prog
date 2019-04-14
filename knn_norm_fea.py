@@ -9,15 +9,18 @@ from sklearn.metrics import accuracy_score
 # define column names
 
 # loading training data
-df = pd.read_csv('data_features.csv')
-#df.head()
-
+df = pd.read_csv('normalizedFeatures.csv')
 df = df.values
 
-X = df[0:, 2:]
+X = df[0:, 1:-1]
 X = np.asarray(X, 'float')
 
-Y = np.vstack((np.ones((70, 1)), np.zeros((46, 1))))
+Y = np.zeros(len(X))
+
+for i in range(len(Y)):
+    if df[i, -1] == 'prog':
+        Y[i] = 1
+    
 Y = Y.ravel()
 
 from sklearn import neighbors
@@ -31,18 +34,19 @@ def KNN(Train, labels, n_neighbors):
 
 j = 0
 
-nk = 20
+nk = 50
 
 acuracy_k = np.zeros((nk, 1))
 
 for k in range(3, 3+nk):
-    accuracy_m = np.zeros((9, 1))
+    accuracy_m = np.zeros((14, 1))
     i = 0
-    for M in range(1, 10):    
+    for M in range(1, 15):    
         X_train, X_valid, label_train, label_valid = train_test_split(X, Y, test_size=0.25, random_state=M)
         knn = KNN(X_train, label_train, k)
         predictions_KNN = knn.predict(X_valid)
         accuracy_m[i]= accuracy_score(label_valid, predictions_KNN)
+#        print('k = ', k, accuracy_m[i])
         i = i + 1
     #    print('knn = ',k,  'accuracy = ', accuracy_KNN[k, 0] * 100, '%')
     acuracy_k[j] = accuracy_m.mean()  
