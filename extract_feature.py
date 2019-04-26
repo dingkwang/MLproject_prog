@@ -2,7 +2,7 @@ import os
 import csv
 import sys
 import librosa
-import matplotlib
+#import matplotlib
 import numpy as np
 import librosa.display
 import IPython.display as ipd
@@ -21,7 +21,7 @@ print("Number of non prog songs",len(non_prog_files))
 all_files = prog_files + non_prog_files
 
 #------------------------- Feature extraction ----------------------------------------------------
-file = open('data_features.csv', 'w', newline='')
+file = open('data_features1.csv', 'w', newline='')
 header = 'filename genre chroma_stft rmse spectral_centroid spectral_bandwidth rolloff zero_crossing_rate'
 
 for i in range(1, 21):

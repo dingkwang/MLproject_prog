@@ -4,12 +4,12 @@ import sys
 
 #current_working_directory = os.getcwd() # get current working directory
 
-current_working_directory = "Z:/Downloads"
+current_working_directory = "Z:/Downloads/cap6610sp19_project/"
 #current_working_directory = 'C:\Users\Dingkang\OneDrive - University of Florida\MLproject_prog\cap6610sp19_project'
 # Address of root directory
-base_path = current_working_directory + "/cap6610sp19_project/"
+base_path = current_working_directory + "/Validation_Set/"
 prog_path = base_path + "Prog/"
-non_prog_path = base_path + "NonProg/"
+non_prog_path = base_path + "Non-Prog/"
 
 
 # Returns all audio files(.mp3, .avi, .wav) in the directory : path
@@ -32,10 +32,10 @@ non_prog_files = fileList(non_prog_path)
 
 
 # Returns all prog rock files
-def get_prog_files():
+def get_prog_files_r():
     return prog_files
 
 
 # Returns all non prog rock files
-def get_non_prog_files() :
+def get_non_prog_files_r() :
     return non_prog_files    
