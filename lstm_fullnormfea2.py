@@ -13,6 +13,7 @@ from keras.layers import LSTM
 from keras.utils import to_categorical
 from matplotlib import pyplot
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
 
 ## load a single file as a numpy array
 #def load_file(filepath):
@@ -67,18 +68,33 @@ from sklearn.model_selection import train_test_split
 def evaluate_model(trainX, trainy, testX, testy):
 	verbose, epochs, batch_size = 0, 15, 16 #epochs = 15 batch size = 64
 	n_timesteps, n_features, n_outputs = trainX.shape[1], trainX.shape[2], trainy.shape[1]
-	print(trainX.shape, trainy.shape, testX.shape, testy.shape)
+#	print(trainX.shape, trainy.shape, testX.shape, testy.shape)
 	model = Sequential()
 	model.add(LSTM(100, input_shape=(n_timesteps, n_features)))
-	model.add(Dropout(0.99))
+	model.add(Dropout(0.2))
 	model.add(Dense(100, activation='relu'))
 	model.add(Dense(n_outputs, activation='softmax'))
 	model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 	# fit network
 	model.fit(trainX, trainy, epochs=epochs, batch_size=batch_size, verbose=verbose)
+	yhat = model.predict_classes(testX, verbose=0)
+	pred = model.predict(testX, batch_size=batch_size, verbose=0)
+	print('testy vs pred', np.hstack((testy, pred)))
+#	print()
+	print('confusion_matrix')
+	print(confusion_matrix(testy[:, 1], yhat))
+#	incorrects = np.nonzero(model.predict(testX).reshape((-1,))!= testy[:, 1])
+#	print('yhat', yhat)	
 	# evaluate model
-	_, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=0)
-	return accuracy
+#	_, accuracy = model.evaluate(testX, testy, batch_size=batch_size, verbose=0)  	
+	loss, accuracy = model.evaluate(testX, testy)
+	print('accuracy', accuracy)
+	incorrects = np.nonzero(yhat != testy[:, 1])
+#	pred = model.predict(testX, batch_size=batch_size, verbose=0)
+	print('incorrects', incorrects)
+#	print('pred', pred) 
+	return accuracy, yhat, pred, incorrects
+    
 
 ## summarize scores
 #def summarize_results(scores):
@@ -92,15 +108,17 @@ def run_experiment(repeats, X, y):
 #	trainX, trainy, testX, testy = load_dataset()
 	# repeat experiment
  
-    scores = list()
-    for r in range(repeats):
-        trainX, testX, trainy, testy = train_test_split(X, y, test_size=0.25, random_state=r)
-        score = evaluate_model(trainX, trainy, testX, testy)
-        score = score * 100.0
-        print('>#%d: %.3f' % (r+1, score))
-        scores.append(score)
+	scores = list()
+	for r in range(repeats):
+		indices = np.arange(len(y))
+		trainX, testX, trainy, testy, idxtrain, idxtest= train_test_split(X, y, indices, test_size=0.2, random_state=5)
+		print('idxtest', idxtest)
+		score = evaluate_model(trainX, trainy, testX, testy)
+		score = score * 100.0
+		print('>#%d: %.3f' % (r+1, score))
+		scores.append(score)
 	# summarize results
-    summarize_results(scores)
+	summarize_results(scores)
 
 def summarize_results(scores):
 	print(scores)
@@ -124,10 +142,19 @@ for i in range(len(Y)):
     
 y = Y.ravel()
 y = to_categorical(y)
+
+#X = pd.DataFrame(X)
+#y = pd.Series(y)
 #y = Y.reshape(n_timesteps, 1 , 1 )
 M = 5
 #trainX, testX, trainy, testy = X, X, y, y
 #trainX, testX, trainy, testy = train_test_split(X, y, test_size=0.25, random_state=M)
 
 #accuracy = evaluate_model(trainX, trainy, testX, testy)
-run_experiment(10, X, y)
+#run_experiment(1, X, y)
+
+indices = np.arange(len(y))
+trainX, testX, trainy, testy, idxtrain, idxtest= train_test_split(X, y, indices, test_size=0.2, random_state=5)
+print('idxtest', idxtest)
+accuracy, yhat, pred, incorrects= evaluate_model(trainX, trainy, testX, testy)
+print('incorrect index', idxtest[incorrects])
